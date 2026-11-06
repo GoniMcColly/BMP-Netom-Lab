@@ -1,0 +1,1552 @@
+{
+  "uid": "netom-scale",
+  "title": "netom at scale",
+  "tags": [
+    "bmp",
+    "netom"
+  ],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "refresh": "2s",
+  "time": {
+    "from": "now-10m",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "1s",
+      "2s",
+      "5s",
+      "10s",
+      "30s"
+    ]
+  },
+  "description": "Scale demo: how many routers and paths netom holds, how fast it ingests, and how fast a new consumer gets the full table.",
+  "panels": [
+    {
+      "type": "row",
+      "id": 1,
+      "title": "The whole network in one collector",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "type": "stat",
+      "id": 2,
+      "title": "BMP routers streaming",
+      "description": "Routers with an open BMP session to netom (one TCP session each).",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prom-netom"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "A",
+          "expr": "netom_bmp_num_connected_routers_total{component=\"bmp-in\"}",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "area",
+        "textMode": "auto",
+        "justifyMode": "center",
+        "wideLayout": true
+      }
+    },
+    {
+      "type": "stat",
+      "id": 3,
+      "title": "BGP sessions monitored",
+      "description": "BGP sessions in state Up, summed over all routers. Each one is a peer whose Adj-RIB-In netom receives.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prom-netom"
+      },
+      "gridPos": {
+        "x": 4,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "A",
+          "expr": "sum(netom_bmp_state_num_up_peers_total{component=\"bmp-in\"})",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "area",
+        "textMode": "auto",
+        "justifyMode": "center",
+        "wideLayout": true
+      }
+    },
+    {
+      "type": "stat",
+      "id": 4,
+      "title": "Paths in netom",
+      "description": "RIB records in the collector: one per prefix per peer view (pre- and post-policy count separately). Includes records that were withdrawn.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prom-netom"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "A",
+          "expr": "netom_rib_unit_num_items_total{component=\"rib\"}",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "purple",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "area",
+        "textMode": "auto",
+        "justifyMode": "center",
+        "wideLayout": true
+      }
+    },
+    {
+      "type": "stat",
+      "id": 5,
+      "title": "Unique prefixes",
+      "description": "Distinct prefixes across all routers and peers.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prom-netom"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "A",
+          "expr": "netom_rib_unit_num_unique_prefixes_total{component=\"rib\"}",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "area",
+        "textMode": "auto",
+        "justifyMode": "center",
+        "wideLayout": true
+      }
+    },
+    {
+      "type": "stat",
+      "id": 6,
+      "title": "Ingest rate",
+      "description": "Prefix announcements per second parsed from all BMP sessions (10 s window).",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prom-netom"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "A",
+          "expr": "sum(rate(netom_bmp_state_num_announcements_total{component=\"bmp-in\"}[10s])) or vector(0)",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "orange",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "area",
+        "textMode": "auto",
+        "justifyMode": "center",
+        "wideLayout": true
+      }
+    },
+    {
+      "type": "stat",
+      "id": 7,
+      "title": "netom memory",
+      "description": "Working set of the netom container (cAdvisor).",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prom-netom"
+      },
+      "gridPos": {
+        "x": 20,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "A",
+          "expr": "sum(container_memory_working_set_bytes{name=~\"clab-.+-netom\"})",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "area",
+        "textMode": "auto",
+        "justifyMode": "center",
+        "wideLayout": true
+      }
+    },
+    {
+      "type": "row",
+      "id": 8,
+      "title": "Late joiner: a new consumer gets the full table from netom, not from the routers",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "id": 9,
+      "title": "Paths held: collector vs. consumers",
+      "description": "When a consumer starts, its line climbs to the collector's line. Every path it gets comes from netom's RIB; the routers send nothing extra.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prom-netom"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 6,
+        "w": 16,
+        "h": 10
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "A",
+          "expr": "netom_rib_unit_num_items_total{component=\"rib\"}",
+          "legendFormat": "collector (netom)"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "B",
+          "expr": "netom_rib_unit_num_items_total{component=\"consumer-rib\"}",
+          "legendFormat": "consumer 1"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "C",
+          "expr": "netom_rib_unit_num_items_total{component=\"consumer2-rib\"}",
+          "legendFormat": "consumer 2"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 3,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "collector (netom)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "purple"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "consumer 1"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "consumer 2"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "yellow"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "id": 10,
+      "title": "Consumer 1: paths vs. netom",
+      "description": "Paths the consumer has stored, as a share of netom's. netom's count includes withdrawn records, so a consumer that joins during churn shows slightly less until those prefixes are announced again.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prom-netom"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 6,
+        "w": 4,
+        "h": 5
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "A",
+          "expr": "100 * netom_rib_unit_num_items_total{component=\"consumer-rib\"} / on() netom_rib_unit_num_items_total{component=\"rib\"}",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 50
+              },
+              {
+                "color": "green",
+                "value": 99
+              }
+            ]
+          },
+          "decimals": 1,
+          "noValue": "not running"
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "auto",
+        "justifyMode": "center",
+        "wideLayout": true
+      }
+    },
+    {
+      "type": "stat",
+      "id": 11,
+      "title": "Consumer 2: paths vs. netom",
+      "description": "Paths the consumer has stored, as a share of netom's. netom's count includes withdrawn records, so a consumer that joins during churn shows slightly less until those prefixes are announced again.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prom-netom"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 11,
+        "w": 4,
+        "h": 5
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "A",
+          "expr": "100 * netom_rib_unit_num_items_total{component=\"consumer2-rib\"} / on() netom_rib_unit_num_items_total{component=\"rib\"}",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 50
+              },
+              {
+                "color": "green",
+                "value": 99
+              }
+            ]
+          },
+          "decimals": 1,
+          "noValue": "not running"
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "auto",
+        "justifyMode": "center",
+        "wideLayout": true
+      }
+    },
+    {
+      "type": "stat",
+      "id": 12,
+      "title": "Consumers connected",
+      "description": "Open sessions on netom's restream port (bmp-tcp-out :11020).",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prom-netom"
+      },
+      "gridPos": {
+        "x": 20,
+        "y": 6,
+        "w": 4,
+        "h": 5
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "A",
+          "expr": "netom_bmp_tcp_out_clients_connected_total{component=\"bmp-out\"} - netom_bmp_tcp_out_clients_disconnected_total{component=\"bmp-out\"}",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "justifyMode": "center",
+        "wideLayout": true
+      }
+    },
+    {
+      "type": "stat",
+      "id": 13,
+      "title": "Router BMP messages, last 30 s",
+      "description": "Messages the routers sent netom in the last 30 s. A consumer joining does not change this: the routers are not involved.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prom-netom"
+      },
+      "gridPos": {
+        "x": 20,
+        "y": 11,
+        "w": 4,
+        "h": 5
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "A",
+          "expr": "sum(increase(netom_bmp_tcp_in_num_bmp_messages_received_total{component=\"bmp-in\"}[30s])) or vector(0)",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "justifyMode": "center",
+        "wideLayout": true
+      }
+    },
+    {
+      "type": "row",
+      "id": 14,
+      "title": "Ingest: what the routers are telling netom",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "id": 15,
+      "title": "Announcements / withdrawals per second (all routers)",
+      "description": "Withdrawals are drawn below zero.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prom-netom"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 17,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "A",
+          "expr": "sum(rate(netom_bmp_state_num_announcements_total{component=\"bmp-in\"}[10s]))",
+          "legendFormat": "announcements"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "B",
+          "expr": "-sum(rate(netom_bmp_state_num_withdrawals_total{component=\"bmp-in\"}[10s]))",
+          "legendFormat": "withdrawals"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "announcements"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "withdrawals"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "red"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "id": 16,
+      "title": "BMP messages per second by type",
+      "description": "",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prom-netom"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 17,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "A",
+          "expr": "sum by (msg_type) (rate(netom_bmp_tcp_in_num_bmp_messages_received_total{component=\"bmp-in\"}[10s]))",
+          "legendFormat": "{{msg_type}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "type": "table",
+      "id": 17,
+      "title": "Per router: prefixes and sessions (sysName from netom's API)",
+      "description": "Prometheus labels routers by netom's ingress id; the netom API (Infinity) supplies the sysName.",
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Mixed --"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 25,
+        "w": 12,
+        "h": 12
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "A",
+          "expr": "netom_bmp_state_num_received_prefixes_total{component=\"bmp-in\"}",
+          "legendFormat": "",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "B",
+          "expr": "netom_bmp_state_num_up_peers_total{component=\"bmp-in\"}",
+          "legendFormat": "",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "netom-api"
+          },
+          "refId": "C",
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "parser": "backend",
+          "url": "http://172.20.20.101:8080/api/v1/ingresses?filter[type]=bmp",
+          "url_options": {
+            "method": "GET",
+            "data": ""
+          },
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "id",
+              "text": "router",
+              "type": "string"
+            },
+            {
+              "selector": "name",
+              "text": "Router",
+              "type": "string"
+            },
+            {
+              "selector": "remote_addr",
+              "text": "Mgmt IP",
+              "type": "string"
+            },
+            {
+              "selector": "state",
+              "text": "State",
+              "type": "string"
+            }
+          ],
+          "filters": []
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "router",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Time 1": true,
+              "Time 2": true,
+              "__name__": true,
+              "__name__ 1": true,
+              "__name__ 2": true,
+              "component": true,
+              "component 1": true,
+              "component 2": true,
+              "collector": true,
+              "collector 1": true,
+              "collector 2": true,
+              "instance": true,
+              "instance 1": true,
+              "instance 2": true,
+              "job": true,
+              "job 1": true,
+              "job 2": true
+            },
+            "indexByName": {
+              "Router": 0,
+              "router": 1,
+              "Mgmt IP": 2,
+              "Value #A": 3,
+              "Value #B": 4,
+              "State": 5
+            },
+            "renameByName": {
+              "router": "Ingress",
+              "Value #A": "Prefixes received",
+              "Value #B": "BGP sessions up"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "sort": [
+              {
+                "field": "Prefixes received",
+                "desc": true
+              }
+            ]
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Prefixes received"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "gauge",
+                  "mode": "basic"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "continuous-BlPu"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      }
+    },
+    {
+      "type": "timeseries",
+      "id": 18,
+      "title": "BMP in \u2192 stored in RIB: worst latency",
+      "description": "netom reports, per peer view, how long the most recent prefix took from BMP receipt to being stored in the RIB (whole milliseconds, kept for 60 s after activity). This panel shows the slowest view. 0 means under 1 ms.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prom-netom"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 25,
+        "w": 12,
+        "h": 6
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "A",
+          "expr": "max(netom_rib_unit_e2e_duration_milliseconds{component=\"rib\"}) or on() vector(0)",
+          "legendFormat": "worst peer view"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "min": 0,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "worst peer view"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "orange"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "id": 19,
+      "title": "Restream sessions",
+      "description": "netom's bmp-tcp-out (:11020).",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prom-netom"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 31,
+        "w": 12,
+        "h": 6
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "A",
+          "expr": "netom_bmp_tcp_out_clients_connected_total{component=\"bmp-out\"} - netom_bmp_tcp_out_clients_disconnected_total{component=\"bmp-out\"}",
+          "legendFormat": "consumers connected"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "B",
+          "expr": "netom_bmp_tcp_out_active_dumps_total{component=\"bmp-out\"}",
+          "legendFormat": "dumps in progress"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "stepAfter",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "type": "row",
+      "id": 20,
+      "title": "Cost: what does this take?",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 37,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "id": 21,
+      "title": "CPU (cores)",
+      "description": "",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prom-netom"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 38,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "A",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{name=~\"clab-.+-netom\"}[15s]))",
+          "legendFormat": "netom"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "B",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{name=~\"clab-.+-netom-consumer2?\"}[15s]))",
+          "legendFormat": "consumers"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "C",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{name=~\"clab-.+\", name!~\"clab-.+-(netom|netom-consumer2?|prometheus|grafana|cadvisor)\"}[15s]))",
+          "legendFormat": "all FRR routers"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "netom"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "purple"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "consumers"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "all FRR routers"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "blue"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "id": 22,
+      "title": "Memory",
+      "description": "",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prom-netom"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 38,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "A",
+          "expr": "sum(container_memory_working_set_bytes{name=~\"clab-.+-netom\"})",
+          "legendFormat": "netom"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "B",
+          "expr": "sum(container_memory_working_set_bytes{name=~\"clab-.+-netom-consumer2?\"})",
+          "legendFormat": "consumers"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prom-netom"
+          },
+          "refId": "C",
+          "expr": "sum(container_memory_working_set_bytes{name=~\"clab-.+\", name!~\"clab-.+-(netom|netom-consumer2?|prometheus|grafana|cadvisor)\"})",
+          "legendFormat": "all FRR routers"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "min": 0,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "netom"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "purple"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "consumers"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "all FRR routers"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "blue"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    }
+  ],
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  }
+}

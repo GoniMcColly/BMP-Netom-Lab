@@ -1,0 +1,28 @@
+# FRR daemons file, shared by all lab routers.
+# Scale pod variant: bgpd -n = do not install BGP routes into the kernel (saves CPU).
+# Read by the image's entrypoint at container start, so bgpd comes up with
+# the BMP module loaded (-M bmp) before any config is applied.
+zebra=yes
+bgpd=yes
+ospfd=no
+ospf6d=no
+ripd=no
+ripngd=no
+isisd=no
+pimd=no
+ldpd=no
+nhrpd=no
+eigrpd=no
+babeld=no
+sharpd=no
+pbrd=no
+bfdd=no
+fabricd=no
+vrrpd=no
+pathd=no
+
+vtysh_enable=yes
+zebra_options="  -A 127.0.0.1 -s 90000000"
+mgmtd_options="  -A 127.0.0.1"
+bgpd_options="   -A 127.0.0.1 -M bmp -n"
+staticd_options="-A 127.0.0.1"

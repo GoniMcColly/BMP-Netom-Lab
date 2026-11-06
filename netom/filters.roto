@@ -1,0 +1,43 @@
+# Roto filters for the BMP demo lab (Netom 0.6.0).
+#
+# These filters only OBSERVE: every path returns `accept`. A `reject` in
+# rib_in_pre would remove the route from Netom's RIB and break the
+# pre-/post-policy comparison.
+#
+# Counters appear on /metrics as `roto_user_defined_<name>`.
+
+fn compile_lists() {
+    prefix_lists.add("demo_filtered", "10.99.99.0/24");
+}
+
+filter bmp_in(
+    bmp_msg: BmpMsg,
+    ingress_info: IngressInfo,
+) {
+    if bmp_msg.is_peer_down() {
+        output.log_peer_down();
+        metrics.increase_counter("bmp_peer_down_seen", 1);
+    }
+    if bmp_msg.is_route_monitoring() {
+        metrics.increase_counter("bmp_route_monitoring_seen", 1);
+    }
+    accept
+}
+
+# rib_in_pre runs once per individual announcement/withdrawal, for every RIB
+# view (pre-policy AND post-policy). Roto cannot see the view itself
+# (IngressInfo only exposes peer_asn/peer_address), so the "proof" of which
+# view holds 10.99.99.0/24 comes from the RIB API's filter[ribType].
+filter rib_in_pre(
+    route: Route,
+    ingress_info: IngressInfo,
+) {
+    if prefix_lists.contains("demo_filtered", route.prefix()) {
+        output.log_prefix(route.prefix());
+        metrics.increase_counter(
+            f"demo_bogon_seen{{peer_asn=\"{ingress_info.peer_asn()}\"}}",
+            1
+        );
+    }
+    accept
+}

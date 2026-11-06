@@ -1,0 +1,219 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1330 900" width="1330" height="900" font-family="Noto Sans, DejaVu Sans, Arial, Helvetica, sans-serif">
+  <defs>
+    <linearGradient id="rbody" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#1b4f8f"/>
+      <stop offset="0.45" stop-color="#2f78c8"/>
+      <stop offset="1" stop-color="#1b4f8f"/>
+    </linearGradient>
+    <linearGradient id="rtop" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#8cbcf0"/>
+      <stop offset="1" stop-color="#5c9ad9"/>
+    </linearGradient>
+    <linearGradient id="sfront" x1="0" x2="1">
+      <stop offset="0" stop-color="#f4f6f9"/>
+      <stop offset="1" stop-color="#dfe5ec"/>
+    </linearGradient>
+
+    <!-- Generic router: blue cylinder, four arrows on top (two in, two out) -->
+    <symbol id="router" viewBox="0 0 80 52" overflow="visible">
+      <path d="M0 13 v24 a40 13 0 0 0 80 0 v-24 z" fill="url(#rbody)" stroke="#123a6b" stroke-width="1.2"/>
+      <ellipse cx="40" cy="13" rx="40" ry="13" fill="url(#rtop)" stroke="#123a6b" stroke-width="1.2"/>
+      <g transform="translate(40 13) scale(1 0.33)" fill="#ffffff">
+        <g transform="rotate(-45)"><path d="M5 -3.5 h13 v-6 l11 9.5 l-11 9.5 v-6 h-13 z"/></g>
+        <g transform="rotate(135)"><path d="M5 -3.5 h13 v-6 l11 9.5 l-11 9.5 v-6 h-13 z"/></g>
+        <g transform="rotate(45)"><path d="M29 -3.5 h-13 v-6 l-11 9.5 l11 9.5 v-6 h13 z"/></g>
+        <g transform="rotate(-135)"><path d="M29 -3.5 h-13 v-6 l-11 9.5 l11 9.5 v-6 h13 z"/></g>
+      </g>
+    </symbol>
+
+    <!-- Generic tower server -->
+    <symbol id="server" viewBox="0 0 56 76" overflow="visible">
+      <path d="M0 10 l12 -10 h44 l-12 10 z" fill="#eef2f6" stroke="#4b5866" stroke-width="1.2"/>
+      <path d="M44 10 l12 -10 v66 l-12 10 z" fill="#b9c3ce" stroke="#4b5866" stroke-width="1.2"/>
+      <rect x="0" y="10" width="44" height="66" fill="url(#sfront)" stroke="#4b5866" stroke-width="1.2"/>
+      <g stroke="#7d8996" stroke-width="2">
+        <line x1="7" y1="20" x2="37" y2="20"/>
+        <line x1="7" y1="27" x2="37" y2="27"/>
+        <line x1="7" y1="34" x2="37" y2="34"/>
+      </g>
+      <circle cx="10" cy="66" r="2.6" fill="#22a35a"/>
+      <circle cx="18" cy="66" r="2.6" fill="#7d8996"/>
+    </symbol>
+
+    <!-- Monitor with a chart (dashboard) -->
+    <symbol id="monitor" viewBox="0 0 84 70" overflow="visible">
+      <rect x="0" y="0" width="84" height="54" rx="4" fill="#3d4854" stroke="#2a323b" stroke-width="1.2"/>
+      <rect x="5" y="5" width="74" height="44" fill="#ffffff"/>
+      <polyline points="10,40 24,30 36,35 50,18 62,26 74,12" fill="none" stroke="#c2410c" stroke-width="2.4"/>
+      <polyline points="10,44 24,40 36,42 50,34 62,37 74,30" fill="none" stroke="#2f78c8" stroke-width="2"/>
+      <path d="M34 54 h16 l3 10 h-22 z" fill="#5f6b78"/>
+      <rect x="24" y="64" width="36" height="5" rx="2" fill="#3d4854"/>
+    </symbol>
+
+    <marker id="arr-rs" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#0f766e"/>
+    </marker>
+    <marker id="arr-bmp" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="18" markerHeight="18" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#c2410c"/>
+    </marker>
+    <marker id="arr-pull" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#7b8794"/>
+    </marker>
+  </defs>
+
+  <rect width="1330" height="900" fill="#ffffff"/>
+
+  <!-- ===== Group areas ===== -->
+  <rect x="40" y="40" width="706" height="460" rx="14" fill="#f6f8fa" stroke="#d3dae1" stroke-width="1.2"/>
+  <text x="60" y="70" font-size="17" font-weight="700" fill="#16202a">Story network</text>
+  <text x="60" y="91" font-size="13" fill="#5a6773">6 FRR routers · <tspan font-weight="700" fill="#16202a">10 prefixes</tspan> announced · <tspan font-weight="700" fill="#c2410c">47 BGP routes</tspan> in netom</text>
+
+  <rect x="776" y="40" width="490" height="460" rx="14" fill="#f6f8fa" stroke="#d3dae1" stroke-width="1.2"/>
+  <text x="796" y="70" font-size="17" font-weight="700" fill="#16202a">Scale pod</text>
+  <text x="796" y="91" font-size="13" fill="#5a6773">1 hub + 30 leaves · <tspan font-weight="700" fill="#16202a">24,000 prefixes</tspan> announced</text>
+  <text x="796" y="109" font-size="13" fill="#5a6773"><tspan font-weight="700" fill="#c2410c">570,000 BGP routes</tspan> in netom</text>
+
+  <!-- AS65000 box -->
+  <rect x="290" y="128" width="344" height="152" rx="10" fill="#eaf1fa" stroke="#9db8d8" stroke-width="1.2" stroke-dasharray="6 4"/>
+  <text x="626" y="148" font-size="13" font-weight="700" fill="#2c5d93" text-anchor="end">AS65000</text>
+
+  <!-- ===== Management / BMP bus ===== -->
+  <g stroke="#c2410c" stroke-width="2" stroke-dasharray="7 5" fill="none">
+    <line x1="123" y1="280" x2="123" y2="560"/>
+    <line x1="353" y1="240" x2="353" y2="560"/>
+    <line x1="564" y1="240" x2="564" y2="560"/>
+    <line x1="233" y1="470" x2="233" y2="560"/>
+    <line x1="463" y1="470" x2="463" y2="560"/>
+    <line x1="680" y1="486" x2="680" y2="560"/>
+    <line x1="850" y1="478" x2="850" y2="560"/>
+    <line x1="970" y1="478" x2="970" y2="560"/>
+    <line x1="1190" y1="478" x2="1190" y2="560"/>
+    <polyline points="1060,166 1290,166 1290,560"/>
+  </g>
+  <line x1="100" y1="560" x2="1290" y2="560" stroke="#c2410c" stroke-width="5"/>
+  <rect x="96" y="568" width="500" height="24" fill="#ffffff"/>
+  <text x="104" y="586" font-size="14" fill="#c2410c" font-weight="700">BMP over mgmt network 172.20.20.0/24 <tspan font-weight="400">· every router → netom :11019</tspan></text>
+  <line x1="610" y1="562" x2="610" y2="651" stroke="#c2410c" stroke-width="5" marker-end="url(#arr-bmp)"/>
+
+  <!-- ===== BGP links: story ===== -->
+  <g stroke="#46525e" stroke-width="2.4" fill="none">
+    <line x1="163" y1="210" x2="313" y2="210"/>
+    <line x1="251" y1="388" x2="333" y2="232"/>
+    <line x1="445" y1="388" x2="373" y2="232"/>
+    <line x1="393" y1="210" x2="524" y2="210"/>
+    <line x1="590" y1="230" x2="664" y2="392"/>
+  </g>
+  <g font-size="11.5" fill="#5a6773">
+    <text x="238" y="202" text-anchor="middle">eBGP 10.0.13.0/30</text>
+    <text text-anchor="middle" transform="translate(280 303) rotate(-62.3)">eBGP 10.0.23.0/30</text>
+    <text x="420" y="300">eBGP</text>
+    <text x="420" y="314">10.0.34.0/30</text>
+    <text x="458" y="202" text-anchor="middle">iBGP 10.0.35.0/30</text>
+    <text x="634" y="300">eBGP</text>
+    <text x="634" y="314">10.0.56.0/30</text>
+  </g>
+
+  <!-- ===== Story routers ===== -->
+  <use href="#router" xlink:href="#router" x="83" y="184" width="80" height="52"/>
+  <text x="123" y="256" font-size="15" font-weight="700" fill="#16202a" text-anchor="middle">r1-isp1</text>
+  <text x="123" y="273" font-size="12.5" fill="#5a6773" text-anchor="middle">AS65001</text>
+  <text x="123" y="128" font-size="12" fill="#5a6773" text-anchor="middle">1.1.1.1/32</text>
+  <text x="123" y="143" font-size="12" fill="#5a6773" text-anchor="middle">10.99.99.0/24</text>
+
+  <use href="#router" xlink:href="#router" x="313" y="184" width="80" height="52"/>
+  <text x="353" y="176" font-size="15" font-weight="700" fill="#16202a" text-anchor="middle">r3-edge</text>
+
+  <use href="#router" xlink:href="#router" x="524" y="184" width="80" height="52"/>
+  <text x="564" y="176" font-size="15" font-weight="700" fill="#16202a" text-anchor="middle">r5-agg</text>
+
+  <use href="#router" xlink:href="#router" x="193" y="374" width="80" height="52"/>
+  <text x="233" y="446" font-size="15" font-weight="700" fill="#16202a" text-anchor="middle">r2-isp2</text>
+  <text x="233" y="463" font-size="12.5" fill="#5a6773" text-anchor="middle">AS65002 · 2.2.2.2/32, 203.0.113.0/24</text>
+
+  <use href="#router" xlink:href="#router" x="423" y="374" width="80" height="52"/>
+  <text x="463" y="446" font-size="15" font-weight="700" fill="#16202a" text-anchor="middle">r4-ixp</text>
+  <text x="463" y="463" font-size="12.5" fill="#5a6773" text-anchor="middle">AS65535 · 198.51.100.0/24</text>
+
+  <use href="#router" xlink:href="#router" x="640" y="374" width="80" height="52"/>
+  <text x="680" y="446" font-size="15" font-weight="700" fill="#16202a" text-anchor="middle">r6-cust</text>
+  <text x="680" y="463" font-size="12.5" fill="#5a6773" text-anchor="middle">AS65100</text>
+  <text x="680" y="478" font-size="12.5" fill="#5a6773" text-anchor="middle">192.0.2.0/24</text>
+
+  <rect x="312" y="98" width="300" height="24" rx="5" fill="#fff7ed" stroke="#f0c9a8"/>
+  <text x="462" y="115" font-size="12.5" fill="#7c2d12" text-anchor="middle">r3 inbound from r1: deny 10.99.99.0/24</text>
+
+  <!-- ===== BGP links: pod ===== -->
+  <g stroke="#46525e" stroke-width="2" fill="none">
+    <line x1="1002" y1="186" x2="858" y2="370"/>
+    <line x1="1012" y1="190" x2="976" y2="368"/>
+    <line x1="1038" y1="186" x2="1182" y2="370"/>
+  </g>
+  <g stroke="#a9b3bd" stroke-width="1.6" stroke-dasharray="3 4" fill="none">
+    <line x1="1024" y1="190" x2="1060" y2="372"/>
+    <line x1="1030" y1="188" x2="1110" y2="372"/>
+  </g>
+  <text x="902" y="300" font-size="11.5" fill="#5a6773" text-anchor="end">eBGP 172.31.N.0/30</text>
+  <text x="902" y="314" font-size="11.5" fill="#5a6773" text-anchor="end">hub side passive</text>
+
+  <use href="#router" xlink:href="#router" x="980" y="140" width="80" height="52"/>
+  <text x="964" y="160" font-size="15" font-weight="700" fill="#16202a" text-anchor="end">hub</text>
+  <text x="964" y="177" font-size="12.5" fill="#5a6773" text-anchor="end">AS65200</text>
+
+  <use href="#router" xlink:href="#router" x="815" y="370" width="70" height="46"/>
+  <text x="850" y="436" font-size="14" font-weight="700" fill="#16202a" text-anchor="middle">leaf01</text>
+  <use href="#router" xlink:href="#router" x="935" y="370" width="70" height="46"/>
+  <text x="970" y="436" font-size="14" font-weight="700" fill="#16202a" text-anchor="middle">leaf02</text>
+  <text x="1080" y="400" font-size="30" font-weight="700" fill="#7b8794" text-anchor="middle">· · ·</text>
+  <use href="#router" xlink:href="#router" x="1155" y="370" width="70" height="46"/>
+  <text x="1190" y="436" font-size="14" font-weight="700" fill="#16202a" text-anchor="middle">leaf30</text>
+  <text x="1020" y="470" font-size="12.5" fill="#5a6773" text-anchor="middle">AS65201–65230 · each announces 500 own /25</text>
+
+  <!-- ===== Bottom row ===== -->
+  <rect x="520" y="652" width="180" height="210" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="1.6"/>
+  <use href="#server" xlink:href="#server" x="582" y="672" width="56" height="76"/>
+  <text x="610" y="778" font-size="18" font-weight="700" fill="#16202a" text-anchor="middle">netom</text>
+  <text x="610" y="797" font-size="12.5" fill="#5a6773" text-anchor="middle">collector · 172.20.20.101</text>
+  <text x="610" y="820" font-size="12" fill="#7c2d12" text-anchor="middle">bmp-in :11019 → rib</text>
+  <text x="610" y="836" font-size="12" fill="#7c2d12" text-anchor="middle">→ bmp-out :11020</text>
+  <text x="610" y="852" font-size="12" fill="#5a6773" text-anchor="middle">HTTP API / UI :8080</text>
+
+  <g stroke="#0f766e" stroke-width="3" fill="none">
+    <polyline points="700,720 820,720 820,700 846,700" marker-end="url(#arr-rs)"/>
+    <polyline points="820,720 820,780 846,780" marker-end="url(#arr-rs)"/>
+  </g>
+  <text x="758" y="710" font-size="13" font-weight="700" fill="#0f766e" text-anchor="middle">BMP restream</text>
+  <text x="758" y="740" font-size="12" fill="#0f766e" text-anchor="middle">:11020</text>
+
+  <use href="#server" xlink:href="#server" x="854" y="664" width="40" height="54"/>
+  <text x="906" y="688" font-size="15" font-weight="700" fill="#16202a">netom-consumer</text>
+  <text x="906" y="706" font-size="12.5" fill="#5a6773">.102</text>
+  <use href="#server" xlink:href="#server" x="854" y="752" width="40" height="54"/>
+  <text x="906" y="776" font-size="15" font-weight="700" fill="#16202a">netom-consumer2</text>
+  <text x="906" y="794" font-size="12.5" fill="#5a6773">.103</text>
+
+  <use href="#server" xlink:href="#server" x="358" y="690" width="44" height="60"/>
+  <text x="380" y="776" font-size="15" font-weight="700" fill="#16202a" text-anchor="middle">Prometheus</text>
+  <text x="380" y="793" font-size="12.5" fill="#5a6773" text-anchor="middle">.110 (+ cAdvisor)</text>
+  <use href="#monitor" xlink:href="#monitor" x="148" y="688" width="84" height="70"/>
+  <text x="190" y="776" font-size="15" font-weight="700" fill="#16202a" text-anchor="middle">Grafana</text>
+  <text x="190" y="793" font-size="12.5" fill="#5a6773" text-anchor="middle">.111 :3000</text>
+  <g stroke="#7b8794" stroke-width="2" stroke-dasharray="3 4" fill="none">
+    <line x1="516" y1="720" x2="412" y2="720" marker-end="url(#arr-pull)"/>
+    <line x1="350" y1="720" x2="242" y2="720" marker-end="url(#arr-pull)"/>
+  </g>
+  <text x="464" y="710" font-size="12" fill="#5a6773" text-anchor="middle">/metrics (1 s)</text>
+  <text x="296" y="710" font-size="12" fill="#5a6773" text-anchor="middle">queries</text>
+
+  <!-- ===== Legend ===== -->
+  <g font-size="13" fill="#16202a">
+    <rect x="1060" y="650" width="210" height="140" rx="10" fill="#ffffff" stroke="#d3dae1"/>
+    <line x1="1078" y1="680" x2="1118" y2="680" stroke="#46525e" stroke-width="2.4"/>
+    <text x="1130" y="684">BGP session</text>
+    <line x1="1078" y1="710" x2="1118" y2="710" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 5"/>
+    <text x="1130" y="714">BMP (RFC 7854)</text>
+    <line x1="1078" y1="740" x2="1116" y2="740" stroke="#0f766e" stroke-width="3" marker-end="url(#arr-rs)"/>
+    <text x="1130" y="744">BMP restream</text>
+    <line x1="1078" y1="770" x2="1116" y2="770" stroke="#7b8794" stroke-width="2" stroke-dasharray="3 4" marker-end="url(#arr-pull)"/>
+    <text x="1130" y="774">metrics</text>
+  </g>
+</svg>

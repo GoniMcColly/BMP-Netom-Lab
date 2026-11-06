@@ -1,0 +1,193 @@
+name: bmp-demo
+
+# Base topology. Not deployed on its own: gen-scale.py adds the scale pod
+# (hub + leaves) and writes bmp-scale.clab.yml. Use ./lab.sh deploy.
+#
+# Nodes:
+#   r1..r6           FRR 10.0.1; config in ./frr/<node>.conf, daemons in ./frr/daemons
+#                    (bgpd started with -M bmp); one BMP session each, to netom (:11019)
+#   netom            172.20.20.101  BMP in :11019, BMP restream out :11020, HTTP/API/metrics :8080
+#   netom-consumer   172.20.20.102  netom fed only by netom's restream (:11020), act 2
+#   netom-consumer2  172.20.20.103  same, joins later during churn, act 5
+#   prometheus       172.20.20.110  :9090
+#   grafana          172.20.20.111  :3000 (anonymous admin, Infinity plugin preinstalled)
+#   cadvisor         172.20.20.112  per-container CPU / memory
+
+mgmt:
+  network: clab
+  ipv4-subnet: 172.20.20.0/24
+
+topology:
+  nodes:
+    # ==========================================
+    # BMP Collector + RIB + restreamer: Netom (172.20.20.101)
+    # ==========================================
+    netom:
+      kind: linux
+      image: ghcr.io/fastnetmon/netom:0.6.0
+      mgmt-ipv4: 172.20.20.101
+      binds:
+        # Directory bind (not single files) so editor-saved changes are seen
+        # on reload: docker kill -s HUP clab-bmp-demo-netom
+        - ./netom:/etc/netom:ro
+      ports:
+        - "8080:8080"   # web UI (/), API (/api/v1), /metrics
+
+    # ==========================================
+    # Downstream consumer: a second netom fed only by netom's restream (172.20.20.102)
+    # ==========================================
+    netom-consumer:
+      kind: linux
+      image: ghcr.io/fastnetmon/netom:0.6.0
+      mgmt-ipv4: 172.20.20.102
+      binds:
+        - ./netom-consumer:/etc/netom:ro
+      ports:
+        - "8081:8080"   # consumer's web UI / API
+
+    # Second downstream consumer, started during churn (act 5) (172.20.20.103)
+    netom-consumer2:
+      kind: linux
+      image: ghcr.io/fastnetmon/netom:0.6.0
+      mgmt-ipv4: 172.20.20.103
+      binds:
+        - ./netom-consumer2:/etc/netom:ro
+      ports:
+        - "8082:8080"
+
+    # ==========================================
+    # Monitoring
+    # ==========================================
+    prometheus:
+      kind: linux
+      image: prom/prometheus:v3.5.0
+      mgmt-ipv4: 172.20.20.110
+      binds:
+        - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      ports:
+        - "9090:9090"
+
+    grafana:
+      kind: linux
+      image: grafana/grafana:12.1.0
+      mgmt-ipv4: 172.20.20.111
+      env:
+        GF_AUTH_ANONYMOUS_ENABLED: "true"
+        GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+        GF_AUTH_DISABLE_LOGIN_FORM: "true"
+        GF_PLUGINS_PREINSTALL: "yesoreyeram-infinity-datasource"
+        GF_DASHBOARDS_MIN_REFRESH_INTERVAL: "1s"   # netom-scale dashboard refreshes every second
+      binds:
+        - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+        - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      ports:
+        - "3000:3000"
+
+    # Per-container CPU / memory for the netom-scale dashboard (172.20.20.112)
+    cadvisor:
+      kind: linux
+      image: gcr.io/cadvisor/cadvisor:v0.49.1
+      mgmt-ipv4: 172.20.20.112
+      cmd: --docker_only=true --housekeeping_interval=2s --store_container_labels=false
+      binds:
+        - /:/rootfs:ro
+        - /var/run:/var/run:ro
+        - /sys:/sys:ro
+        - /var/lib/docker/:/var/lib/docker:ro
+        - /dev/disk/:/dev/disk:ro
+
+    # ==========================================
+    # R1: Transit ISP 1 (AS 65001)
+    # ==========================================
+    r1-isp1:
+      kind: linux
+      image: quay.io/frrouting/frr:10.0.1
+      mgmt-ipv4: 172.20.20.11
+      binds:
+        - ./frr/daemons:/etc/frr/daemons
+        - ./frr/vtysh.conf:/etc/frr/vtysh.conf
+        - ./frr/r1-isp1.conf:/etc/frr/frr.conf
+      exec:
+        - ip addr add 10.0.13.1/30 dev eth1
+
+    # ==========================================
+    # R2: Transit ISP 2 (AS 65002)
+    # ==========================================
+    r2-isp2:
+      kind: linux
+      image: quay.io/frrouting/frr:10.0.1
+      mgmt-ipv4: 172.20.20.12
+      binds:
+        - ./frr/daemons:/etc/frr/daemons
+        - ./frr/vtysh.conf:/etc/frr/vtysh.conf
+        - ./frr/r2-isp2.conf:/etc/frr/frr.conf
+      exec:
+        - ip addr add 10.0.23.1/30 dev eth1
+
+    # ==========================================
+    # R3: Core Edge Router (AS 65000)
+    # ==========================================
+    r3-edge:
+      kind: linux
+      image: quay.io/frrouting/frr:10.0.1
+      mgmt-ipv4: 172.20.20.13
+      binds:
+        - ./frr/daemons:/etc/frr/daemons
+        - ./frr/vtysh.conf:/etc/frr/vtysh.conf
+        - ./frr/r3-edge.conf:/etc/frr/frr.conf
+      exec:
+        - ip addr add 10.0.13.2/30 dev eth1
+        - ip addr add 10.0.23.2/30 dev eth2
+        - ip addr add 10.0.34.1/30 dev eth3
+        - ip addr add 10.0.35.1/30 dev eth4
+
+    # ==========================================
+    # R4: IXP Peer / Route Server (AS 65535)
+    # ==========================================
+    r4-ixp:
+      kind: linux
+      image: quay.io/frrouting/frr:10.0.1
+      mgmt-ipv4: 172.20.20.14
+      binds:
+        - ./frr/daemons:/etc/frr/daemons
+        - ./frr/vtysh.conf:/etc/frr/vtysh.conf
+        - ./frr/r4-ixp.conf:/etc/frr/frr.conf
+      exec:
+        - ip addr add 10.0.34.2/30 dev eth1
+
+    # ==========================================
+    # R5: Internal Core / Aggregation (AS 65000)
+    # ==========================================
+    r5-agg:
+      kind: linux
+      image: quay.io/frrouting/frr:10.0.1
+      mgmt-ipv4: 172.20.20.15
+      binds:
+        - ./frr/daemons:/etc/frr/daemons
+        - ./frr/vtysh.conf:/etc/frr/vtysh.conf
+        - ./frr/r5-agg.conf:/etc/frr/frr.conf
+      exec:
+        - ip addr add 10.0.35.2/30 dev eth1
+        - ip addr add 10.0.56.1/30 dev eth2
+
+    # ==========================================
+    # R6: Customer Edge Router (AS 65100)
+    # ==========================================
+    r6-cust:
+      kind: linux
+      image: quay.io/frrouting/frr:10.0.1
+      mgmt-ipv4: 172.20.20.16
+      binds:
+        - ./frr/daemons:/etc/frr/daemons
+        - ./frr/vtysh.conf:/etc/frr/vtysh.conf
+        - ./frr/r6-cust.conf:/etc/frr/frr.conf
+      exec:
+        - ip addr add 10.0.56.2/30 dev eth1
+
+  links:
+    # Data-Plane BGP Peering Links
+    - endpoints: ["r1-isp1:eth1", "r3-edge:eth1"]
+    - endpoints: ["r2-isp2:eth1", "r3-edge:eth2"]
+    - endpoints: ["r3-edge:eth3", "r4-ixp:eth1"]
+    - endpoints: ["r3-edge:eth4", "r5-agg:eth1"]
+    - endpoints: ["r5-agg:eth2", "r6-cust:eth1"]

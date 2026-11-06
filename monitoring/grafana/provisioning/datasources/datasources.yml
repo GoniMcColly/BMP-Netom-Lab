@@ -1,0 +1,20 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    uid: prom-netom
+    type: prometheus
+    access: proxy
+    url: http://172.20.20.110:9090
+    isDefault: true
+    jsonData:
+      timeInterval: 5s
+
+  # Netom's JSON API sends no CORS headers, so queries must run server-side
+  # (Infinity "backend" parser), never from the browser.
+  - name: Netom API
+    uid: netom-api
+    type: yesoreyeram-infinity-datasource
+    jsonData:
+      allowedHosts:
+        - http://172.20.20.101:8080

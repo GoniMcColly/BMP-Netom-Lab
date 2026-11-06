@@ -1,0 +1,59 @@
+global:
+  scrape_interval: 5s        # short on purpose: live demo
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: netom
+    # 1 s so the "late joiner" catch-up is visible second by second.
+    scrape_interval: 1s
+    metrics_path: /metrics
+    # Netom answers with plain "text/plain"; Prometheus 3.x refuses unknown or
+    # missing scrape content types unless a fallback is declared.
+    fallback_scrape_protocol: PrometheusText0.0.4
+    static_configs:
+      - targets: ["172.20.20.101:8080"]
+        labels:
+          collector: netom
+
+  # netom-consumer: its unit names ("rib", ...) would collide with the main
+  # netom's, and the dashboard filters only by component. Prefix the
+  # consumer's component label with "consumer-" so it never mixes in.
+  - job_name: netom-consumer
+    scrape_interval: 1s
+    metrics_path: /metrics
+    fallback_scrape_protocol: PrometheusText0.0.4
+    static_configs:
+      - targets: ["172.20.20.102:8080"]
+        labels:
+          collector: netom-consumer
+    metric_relabel_configs:
+      - source_labels: [component]
+        regex: (.+)
+        target_label: component
+        replacement: consumer-$1
+
+  # Second consumer (act 5)
+  - job_name: netom-consumer2
+    scrape_interval: 1s
+    metrics_path: /metrics
+    fallback_scrape_protocol: PrometheusText0.0.4
+    static_configs:
+      - targets: ["172.20.20.103:8080"]
+        labels:
+          collector: netom-consumer2
+    metric_relabel_configs:
+      - source_labels: [component]
+        regex: (.+)
+        target_label: component
+        replacement: consumer2-$1
+
+  # Per-container CPU and memory (netom, consumer, routers).
+  - job_name: cadvisor
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["172.20.20.112:8080"]
+    metric_relabel_configs:
+      # keep only what the dashboards use
+      - source_labels: [__name__]
+        regex: container_(cpu_usage_seconds_total|memory_working_set_bytes)
+        action: keep
