@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Lab control. Run on the lab host as root (containerlab needs it).
+# Lab control. Run on the lab host as root, or as a user in the docker and clab_admins groups.
 #
 #   ./lab.sh deploy  [-n LEAVES] [-H SHARED] [-k OWN] [-c CHURN]   fresh deploy, then ready for act 1
 #   ./lab.sh scale   [-n LEAVES] [-H SHARED] [-k OWN] [-c CHURN]   resize the RUNNING lab live

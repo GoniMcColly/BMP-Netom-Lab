@@ -20,13 +20,13 @@ one BMP session each, however many consumers there are. In the lab, two more net
 
 ## Deploy
 
-Needs Docker, containerlab >= 0.81, python3, jq, curl.
+Needs Docker, containerlab >= 0.81, python3, jq, curl. Run as root, or as a user in the `docker` and `clab_admins` groups.
 Tested on 6 vCPU / 12 GB RAM: at the default size the host peaked at ~4 GB used and ~5.5 cores busy (act 3).
 
 ```bash
-sudo ./lab.sh deploy     # ~1.5 min, ends ready for act 1
-sudo ./lab.sh status
-sudo ./lab.sh destroy
+./lab.sh deploy     # ~1.5 min, ends ready for act 1
+./lab.sh status
+./lab.sh destroy
 ```
 
 Grafana `http://<host>:3000/d/netom-scale` · netom UI `:8080` · consumers `:8081` / `:8082` · Prometheus `:9090`
@@ -34,8 +34,8 @@ Grafana `http://<host>:3000/d/netom-scale` · netom UI `:8080` · consumers `:80
 ## Scale
 
 ```bash
-sudo ./lab.sh scale -n 40          # live, on the running lab
-sudo ./lab.sh deploy -n 20 -k 800  # fresh deploy with a different size
+./lab.sh scale -n 40          # live, on the running lab
+./lab.sh deploy -n 20 -k 800  # fresh deploy with a different size
 ```
 
 `-n` leaves (30, max 79) · `-H` prefixes hub → each leaf (8000) · `-k` prefixes each leaf → hub (500) · `-c` churn prefixes (1000).
@@ -60,9 +60,3 @@ Unset options keep their last value. Paths in netom ≈ `n × (H + c) × 2 + n �
 - **Late joiner:** paths in collector vs. consumers, completeness %. Router messages stay flat: consumers don't load the routers
 - **Ingest:** announcements/withdrawals, BMP message types, per-router table
 - **Cost:** CPU/memory of netom vs. consumers vs. routers
-
-Note: after shrinking, "BMP routers streaming" stays high (netom 0.6.0 metric); `./lab.sh status` is correct.
-
-## License
-
-[MIT](LICENSE)
